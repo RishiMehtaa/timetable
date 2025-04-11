@@ -5,6 +5,7 @@ class Branch(models.Model):
     branch_id = models.IntegerField(primary_key=True)  # Long integer, Primary Key
     branch_name = models.CharField(max_length=255)  # Varchar
     branch_abr = models.CharField(max_length=10)  # Varchar
+    branch_floor = models.IntegerField()  # Long integer
 
     def __str__(self):
         return self.branch_name
@@ -13,6 +14,8 @@ class Subject(models.Model):
     subject_id = models.IntegerField(primary_key=True)  # Long integer, Primary Key
     subject_name = models.CharField(max_length=255)  # Varchar
     subject_abr = models.CharField(max_length=10)  # Varchar
+    subject_credits = models.IntegerField()  # Long integer
+
 
     def __str__(self):
         return self.subject_name
@@ -37,14 +40,14 @@ class Room(models.Model):
         return f'{self.room_type}:{self.room_name} on {self.room_floor}'
     
 class Student(models.Model):
-    sap_id = models.IntegerField(primary_key=True)  # Long integer, Primary Key
-    roll_no = models.CharField(max_length=4)
-    name = models.CharField(max_length=255)  # Varchar
-    branch_id = models.ForeignKey(Branch ,on_delete=models.CASCADE)  # Foreign Key placeholder (can be linked to another model later)
-    class_id = models.CharField(max_length=2)
-    section = models.IntegerField()
-    sem = models.IntegerField()
-    AY = models.DateField()  # Academic Year
+    sap_id      = models.IntegerField(primary_key=True)  # Long integer, Primary Key
+    roll_no     = models.CharField(max_length=4)
+    name        = models.CharField(max_length=255)  # Varchar
+    branch_id   = models.ForeignKey(Branch ,on_delete=models.CASCADE)  # Foreign Key placeholder (can be linked to another model later)
+    class_id    = models.CharField(max_length=2)
+    section     = models.IntegerField()
+    sem         = models.IntegerField()
+    AY          = models.DateField()  # Academic Year
 
     def __str__(self):
         return f"{self.name} ({self.roll_no})"
