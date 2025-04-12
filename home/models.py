@@ -75,3 +75,4 @@ class BranchSub(models.Model):
 
     def __str__(self):
         return f"{self.branch_id.branch_name} - {self.sub_id.subject_name} (Sem {self.sem})"
+    
