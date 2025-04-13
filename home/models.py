@@ -32,8 +32,8 @@ class Teacher(models.Model):
 
 class Room(models.Model):
     room_id = models.IntegerField(primary_key=True)
-    room_name = models.CharField()
-    room_type = models.CharField()
+    room_name = models.CharField(max_length=255)  # Varchar
+    room_type = models.CharField(max_length=50)  # Varchar (e.g., Lecture Hall, Lab, etc.)
     room_floor = models.IntegerField()
 
     def __str__(self):

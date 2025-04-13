@@ -2,33 +2,43 @@ from django.shortcuts import render
 from .models import *
 
 # Create your views here.
+def get_home(request):
+    return render(request, 'home.html')
 
 # TIMETABLE
 # fetch a class's titmetable
 # @api_view(['GET'])
-def get_class_timetable(request,sem,class_id,section):
-    if section == 'dono chahiye':
-        timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
-    else:
-        timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
+def get_class_timetable(request):
+    if request.method == 'GET':
+        sem = request.GET.get('sem')
+        class_id = request.GET.get('class_id')
+        section = request.GET.get('section')
+        if section == 'dono chahiye':
+            timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
+        else:
+            timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
 
-    timetable_list = []
-    for t in timetable:
-        subject = Subject.objects.get(id=t.sub_id)
-        teacher = Teacher.objects.get(id=t.teacher_id)
-        room = Room.objects.get(id=t.room_id)
-        timetable_list.append({
-            'subject': subject.subject_abr,
-            'teacher': teacher.name,
-            'room': room.room_name,  # what to display????????
-            'day': t.day,
-            'start_time': t.start_time,
-            'end_time': t.end_time,
-            'class_id': t.class_id,
-            'section': t.section,
-            'sem': t.sem,
-        })  
-    return render(request, 'timetable.html', {'timetable': timetable_list})     #how to return, json or direct?
+        timetable_list = []
+        for t in timetable:
+            subject = Subject.objects.get(subject_id=t.sub_id[0])
+            teacher = Teacher.objects.get(teacher_id=t.teacher_id)
+            room = Room.objects.get(room_id=t.room_id)
+            timetable_list.append({
+                'subject': subject.subject_abr,
+                'teacher': teacher.name,
+                'room': room.room_name,  # what to display????????
+                'day': t.day,
+                'start_time': t.start_time,
+                'end_time': t.end_time,
+                'class_id': t.class_id,
+                'section': t.section,
+                'sem': t.sem,
+            })  
+        return render(request, 'timetable.html', {
+        'timetable': timetable_list,
+        'sem': sem,
+        'class_id': class_id,
+        'section': section})     #how to return, json or direct?
 # fetch a teacher's timetable
 # fetch a room's timetable
 

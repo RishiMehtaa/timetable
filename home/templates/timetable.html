@@ -1,0 +1,59 @@
+{% extends 'home.html' %}
+
+{% block content %}
+<h2>Class Timetable</h2>
+
+<form method="get" action="{% url 'timetable' %}">
+    <label for="sem">Semester:</label>
+    <select name="sem" id="sem" required>
+        <option value="">--Select--</option>
+        {% for i in "12345678" %}
+            <option value="{{ i }}" {% if sem == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="class_id">Class:</label>
+    <input type="text" name="class_id" id="class_id" value="{{ class_id|default_if_none:'' }}" required>
+
+    <label for="section">Section:</label>
+    <select name="section" id="section">
+        <option value="dono chahiye" {% if section == "dono chahiye" %}selected{% endif %}>Both</option>
+        <option value="1" {% if section == "A" %}selected{% endif %}>1</option>
+        <option value="2" {% if section == "B" %}selected{% endif %}>2</option>
+    </select>
+
+    <button type="submit">Get Timetable</button>
+</form>
+
+{% if timetable %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Subject</th>
+                <th>Teacher</th>
+                <th>Room</th>
+                <th>Section</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in timetable %}
+                <tr>
+                    <td>{{ entry.day }}</td>
+                    <td>{{ entry.start_time }}</td>
+                    <td>{{ entry.end_time }}</td>
+                    <td>{{ entry.subject }}</td>
+                    <td>{{ entry.teacher }}</td>
+                    <td>{{ entry.room }}</td>
+                    <td>{{ entry.section }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No timetable found. Please select options.</p>
+{% endif %}
+
+{% endblock %}

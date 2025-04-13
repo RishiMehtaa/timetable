@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from home.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/', include('home.urls')),
-]
+    path('', get_home, name='home'),
+    path('timetable/',get_class_timetable,name='timetable'),
+    # path('timetable/<int:sem>/<str:class_id>/<str:section>/', get_class_timetable, name='class_timetable'),
+    ]
