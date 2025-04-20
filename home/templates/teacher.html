@@ -1,0 +1,25 @@
+{% extends 'home.html' %}
+{% load custom_filters %}
+{% block content %}
+<h2 class="mb-4">Select teacher</h2>
+
+<form method="get" action="{% url 'teacher' %}" class="row g-3 mb-5">
+    <div class="col-md-3">
+        <label for="teacher_id" class="form-label">name</label>
+        <select name="teacher_id" id="teacher_id" class="form-select">
+            <option value="1">Aniket Kore</option>
+            <option value="2">Pranit Bari</option>
+            <option value="3">Sudhir Bagul</option>
+            <option value="4">Pankaj Sonawane</option>
+            <option value="5">Sudhir Iyer</option>
+            <option value="6">Nilesh Ghawate</option>
+            <!-- Add more as needed -->
+        </select>
+    </div>
+    
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-success w-100">Get Timetable</button>
+    </div>
+</form>
+{% endblock %}
+

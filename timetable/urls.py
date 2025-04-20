@@ -23,6 +23,8 @@ urlpatterns = [
     path('', get_home, name='home'),
     path('timetable/',get_class_timetable,name='timetable'),
     # path('timetable/<int:sem>/<str:class_id>/<str:section>/', get_class_timetable, name='class_timetable'),
+    path('teacher/', get_teacher_timetable, name='teacher'),
+    path('room_lab/', get_room_lab_timetable, name='room_lab'),
     ]
 #     path('timetable/', get_class_timetable, name='timetable'),
 # ]
