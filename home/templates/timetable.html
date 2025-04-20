@@ -35,7 +35,6 @@
     </div>
 </form>
 
-<<<<<<< Updated upstream
 {% if time_slots %}
 <table class="table table-bordered text-center align-middle">
     <thead class="table-dark">
@@ -62,29 +61,6 @@
                 </td>
             
             {% endfor %}
-=======
-{% if timetable %}
-<table class="table table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>Day</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Subject</th>
-            <th>Teacher</th>
-            <th>Room</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in timetable %}
-        <tr>
-            <td>{{ entry.day }}</td>
-            <td>{{ entry.start_time }}</td>
-            <td>{{ entry.end_time }}</td>
-            <td>{{ entry.subject }}</td>
-            <td>{{ entry.teacher }}</td>
-            <td>{{ entry.room }}</td>
->>>>>>> Stashed changes
         </tr>
         {% endfor %}
     </tbody>
