@@ -4,6 +4,7 @@ from .models import *
 # Create your views here.
 def get_home(request):
     return render(request, 'home.html')
+<<<<<<< Updated upstream
 
 # TIMETABLE
 # fetch a class's titmetable
@@ -77,6 +78,42 @@ def get_class_timetable(request):
             'time_slots': sorted_slots,
         })
 
+=======
+# TIMETABLE
+# fetch a class's titmetable
+# @api_view(['GET'])
+def get_class_timetable(request):
+    sem = request.GET.get('sem')
+    class_id = request.GET.get('class_id')
+    section = request.GET.get('section')
+    if section == 'dono chahiye':
+        timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
+    else:
+        timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
+
+    timetable_list = []
+    for t in timetable:
+        timetable_list.append({
+            'subject': t.sub_id.subject_abr,
+            'teacher': t.teacher_id.name,
+            'room': t.room_id.room_name,
+            'day': t.day,
+            'start_time': t.start_time,
+            'end_time': t.end_time,
+            'class_id': t.class_id,
+            'section': t.section,
+            'sem': t.sem,
+        })  
+
+    return render(request, 'timetable.html', {
+        'timetable': timetable_list,
+        'selected': {
+            'sem': sem,
+            'class_id': class_id,
+            'section': section
+        }
+    })
+>>>>>>> Stashed changes
 # fetch a teacher's timetable
 # fetch a room's timetable
 

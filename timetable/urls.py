@@ -15,11 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+<<<<<<< Updated upstream
 from django.urls import path, include
+=======
+from django.urls import path
+>>>>>>> Stashed changes
 from home.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', get_home, name='home'),
+<<<<<<< Updated upstream
     path('timetable/',get_class_timetable,name='timetable'),
     # path('timetable/<int:sem>/<str:class_id>/<str:section>/', get_class_timetable, name='class_timetable'),
     ]
+=======
+    path('timetable/', get_class_timetable, name='timetable'),
+]
+>>>>>>> Stashed changes
