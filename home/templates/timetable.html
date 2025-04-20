@@ -1,59 +1,71 @@
+<!-- templates/timetable.html -->
 {% extends 'home.html' %}
 
 {% block content %}
-<h2>Class Timetable</h2>
+<h2 class="mb-4">Select Your Class Timetable</h2>
 
-<form method="get" action="{% url 'timetable' %}">
-    <label for="sem">Semester:</label>
-    <select name="sem" id="sem" required>
-        <option value="">--Select--</option>
-        {% for i in "12345678" %}
-            <option value="{{ i }}" {% if sem == i %}selected{% endif %}>{{ i }}</option>
-        {% endfor %}
-    </select>
-
-    <label for="class_id">Class:</label>
-    <input type="text" name="class_id" id="class_id" value="{{ class_id|default_if_none:'' }}" required>
-
-    <label for="section">Section:</label>
-    <select name="section" id="section">
-        <option value="dono chahiye" {% if section == "dono chahiye" %}selected{% endif %}>Both</option>
-        <option value="1" {% if section == "A" %}selected{% endif %}>1</option>
-        <option value="2" {% if section == "B" %}selected{% endif %}>2</option>
-    </select>
-
-    <button type="submit">Get Timetable</button>
+<form method="get" action="{% url 'timetable' %}" class="row g-3 mb-5">
+    <div class="col-md-3">
+        <label for="sem" class="form-label">Semester</label>
+        <select name="sem" id="sem" class="form-select">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <!-- Add more as needed -->
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label for="class_id" class="form-label">Class ID</label>
+        <input type="text" name="class_id" id="class_id" class="form-control">
+    </div>
+    <div class="col-md-3">
+        <label for="section" class="form-label">Section</label>
+        <select name="section" id="section" class="form-select">
+            <option value="dono chahiye">Both</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <!-- Add more if needed -->
+        </select>
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-success w-100">Get Timetable</button>
+    </div>
 </form>
 
-{% if timetable %}
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Subject</th>
-                <th>Teacher</th>
-                <th>Room</th>
-                <th>Section</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in timetable %}
-                <tr>
-                    <td>{{ entry.day }}</td>
-                    <td>{{ entry.start_time }}</td>
-                    <td>{{ entry.end_time }}</td>
-                    <td>{{ entry.subject }}</td>
-                    <td>{{ entry.teacher }}</td>
-                    <td>{{ entry.room }}</td>
-                    <td>{{ entry.section }}</td>
-                </tr>
+{% if time_slots %}
+<table class="table table-bordered text-center align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Time</th>
+            {% for day in days %}
+                <th>{{ day }}</th>
             {% endfor %}
-        </tbody>
-    </table>
+        </tr>
+    </thead>
+    <tbody>
+        {% for slot, day_info in time_slots %}
+        <tr>
+            <td>{{ slot.0 }} - {{ slot.1 }}</td>
+            {% for day in days %}
+                <td>
+                    {% with val=day_info.day %}
+                        {% if val %}
+                            {{ val|safe }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    {% endwith %}
+                </td>
+            
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% else %}
-    <p>No timetable found. Please select options.</p>
+    <p>No timetable available yet.</p>
 {% endif %}
-
 {% endblock %}

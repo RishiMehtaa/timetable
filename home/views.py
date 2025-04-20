@@ -8,6 +8,38 @@ def get_home(request):
 # TIMETABLE
 # fetch a class's titmetable
 # @api_view(['GET'])
+# def get_class_timetable(request):
+    # if request.method == 'GET':
+    #     sem = request.GET.get('sem')
+    #     class_id = request.GET.get('class_id')
+    #     section = request.GET.get('section')
+    #     if section == 'dono chahiye':
+    #         timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
+    #     else:
+    #         timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
+
+    #     timetable_list = []
+    #     for t in timetable:
+    #         timetable_list.append({
+    #             'subject': t.sub_id.subject_abr,
+    #             'teacher': t.teacher_id.name,
+    #             'room': t.room_id.room_name,
+    #             'day': t.day,
+    #             'start_time': t.start_time,
+    #             'end_time': t.end_time,
+    #             'class_id': t.class_id,
+    #             'section': t.section,
+    #             'sem': t.sem,
+    #         })  
+        
+    #     return render(request, 'timetable.html', {
+    #     'timetable': timetable_list,
+    #     'sem': sem,
+    #     'class_id': class_id,
+    #     'section': section})     #how to return, json or direct?
+from collections import defaultdict
+from datetime import time
+
 def get_class_timetable(request):
     if request.method == 'GET':
         sem = request.GET.get('sem')
@@ -17,28 +49,34 @@ def get_class_timetable(request):
             timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
         else:
             timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
+        # Days for header row
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        all_slots = [
+            ("08:00", "09:00"),
+            ("09:00", "10:00"),
+            ("10:00", "11:00"),
+            ("11:00", "12:00"),
+            ("12:00", "13:00"),
+            ("14:00", "15:00"),
+            ("15:00", "16:00"),
+        ]
 
-        timetable_list = []
-        for t in timetable:
-            subject = Subject.objects.get(subject_id=t.sub_id[0])
-            teacher = Teacher.objects.get(teacher_id=t.teacher_id)
-            room = Room.objects.get(room_id=t.room_id)
-            timetable_list.append({
-                'subject': subject.subject_abr,
-                'teacher': teacher.name,
-                'room': room.room_name,  # what to display????????
-                'day': t.day,
-                'start_time': t.start_time,
-                'end_time': t.end_time,
-                'class_id': t.class_id,
-                'section': t.section,
-                'sem': t.sem,
-            })  
+        # Step 2: Create an empty table structure
+        table_data = defaultdict(lambda: {day: "" for day in days})
+
+        # Step 3: Populate table_data
+        for entry in timetable:
+            slot = (entry.start_time.strftime("%H:%M"), entry.end_time.strftime("%H:%M"))
+            info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
+            table_data[slot][entry.day] = info
+
+        # Step 4: Sort time slots
+        sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
         return render(request, 'timetable.html', {
-        'timetable': timetable_list,
-        'sem': sem,
-        'class_id': class_id,
-        'section': section})     #how to return, json or direct?
+            'days': days,
+            'time_slots': sorted_slots,
+        })
+
 # fetch a teacher's timetable
 # fetch a room's timetable
 
