@@ -72,6 +72,7 @@ def get_class_timetable(request):
 
         # Step 4: Sort time slots
         sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
+        
         return render(request, 'timetable.html', {
             'days': days,
             'time_slots': sorted_slots,

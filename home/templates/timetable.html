@@ -1,6 +1,6 @@
 <!-- templates/timetable.html -->
 {% extends 'home.html' %}
-
+{% load custom_filters %}
 {% block content %}
 <h2 class="mb-4">Select Your Class Timetable</h2>
 
@@ -24,7 +24,7 @@
     <div class="col-md-3">
         <label for="section" class="form-label">Section</label>
         <select name="section" id="section" class="form-select">
-            <option value="dono chahiye">Both</option>
+            <option value="dono chahiye">Dono chahiye</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <!-- Add more if needed -->
@@ -51,9 +51,9 @@
             <td>{{ slot.0 }} - {{ slot.1 }}</td>
             {% for day in days %}
                 <td>
-                    {% with val=day_info.day %}
+                    {% with val=day_info|get_item:day %}
                         {% if val %}
-                            {{ val|safe }}
+                            {{ day_info|get_item:day|safe  }}
                         {% else %}
                             -
                         {% endif %}
