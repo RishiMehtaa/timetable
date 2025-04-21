@@ -5,8 +5,8 @@
 
 <form method="get" action="{% url 'room_lab' %}" class="row g-3 mb-5">
     <div class="col-md-3">
-        <label for="sem" class="form-label">room/lab</label>
-        <select name="sem" id="sem" class="form-select">
+        <label for="room_id" class="form-label">room/lab</label>
+        <select name="room_id" id="room_id" class="form-select">
             <option value="1">CR 61</option>
             <option value="2">CR 62</option>
             <option value="3">CR 63</option>
@@ -21,5 +21,36 @@
         <button type="submit" class="btn btn-success w-100">Get Timetable</button>
     </div>
 </form>
+{% if time_slots %}
+<table class="table table-bordered text-center align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Time</th>
+            {% for day in days %}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for slot in predefined_time_slots %}
+        <tr>
+            <td>{{ slot.0 }} - {{ slot.1 }}</td>
+            {% for day in days %}
+                <td>
+                    {% if time_slots and time_slots|get_item:slot|get_item:day %}
+                        {{ time_slots|get_item:slot|get_item:day|safe }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <p>No timetable available yet.</p>
+{% endif %}
 {% endblock %}
 

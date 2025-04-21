@@ -21,5 +21,36 @@
         <button type="submit" class="btn btn-success w-100">Get Timetable</button>
     </div>
 </form>
+{% if time_slots %}
+<table class="table table-bordered text-center align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Time</th>
+            {% for day in days %}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for slot in predefined_time_slots %}
+        <tr>
+            <td>{{ slot.0 }} - {{ slot.1 }}</td>
+            {% for day in days %}
+                <td>
+                    {% if time_slots and time_slots|get_item:slot|get_item:day %}
+                        {{ time_slots|get_item:slot|get_item:day|safe }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <p>No timetable available yet.</p>
+{% endif %}
 {% endblock %}
 

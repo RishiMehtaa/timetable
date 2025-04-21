@@ -3,6 +3,30 @@ from datetime import time
 from django.shortcuts import render
 from .models import *
 
+all_slots = [
+            ("08:00", "08:30"),
+            ("08:30", "09:00"),
+            ("09:00", "09:30"),
+            ("09:30", "10:00"),
+            ("10:00", "10:30"),
+            ("10:30", "11:00"),
+            ("11:00", "11:30"),
+            ("11:30", "12:00"),
+            ("12:00", "12:30"),
+            ("12:30", "13:00"),
+            ("13:00", "13:30"),
+            ("13:30", "14:00"),
+            ("14:00", "14:30"),
+            ("14:30", "15:00"),
+            ("15:00", "15:30"),
+            ("15:30", "16:00"),
+            ("16:00", "16:30"),
+            ("16:30", "17:00"),
+            ("17:00", "17:30"),
+            ("17:30", "18:00"),
+            ]
+
+
 # Create your views here.
 def get_home(request):
     return render(request, 'home.html')
@@ -20,15 +44,6 @@ def get_class_timetable(request):
             timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
         # Days for header row
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        all_slots = [
-            ("08:00", "09:00"),
-            ("09:00", "10:00"),
-            ("10:00", "11:00"),
-            ("11:00", "12:00"),
-            ("12:00", "13:00"),
-            ("14:00", "15:00"),
-            ("15:00", "16:00"),
-        ]
 
         table_data = defaultdict(lambda: {day: "" for day in days})
 
@@ -38,10 +53,13 @@ def get_class_timetable(request):
             table_data[slot][entry.day] = info
 
         sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
+        # print(sorted_slots)
+        # print(table_data)
 
         return render(request, 'timetable.html', {
             'days': days,
-            'time_slots': sorted_slots,
+            'time_slots': table_data,
+            'predefined_time_slots': all_slots,
         })
 
 # fetch a teacher's timetable
@@ -51,15 +69,6 @@ def get_teacher_timetable(request):
         timetable = Teaches.objects.filter(teacher_id=teacher_id)  
         # Days for header row
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        all_slots = [
-            ("08:00", "09:00"),
-            ("09:00", "10:00"),
-            ("10:00", "11:00"),
-            ("11:00", "12:00"),
-            ("12:00", "13:00"),
-            ("14:00", "15:00"),
-            ("15:00", "16:00"),
-        ]
 
         table_data = defaultdict(lambda: {day: "" for day in days})
 
@@ -68,11 +77,11 @@ def get_teacher_timetable(request):
             info = f"{entry.sub_id.subject_abr}<br>{entry.sem}{entry.class_id}<br>{entry.room_id.room_name}"
             table_data[slot][entry.day] = info
 
-        sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
 
         return render(request, 'teacher.html', {
             'days': days,
-            'time_slots': sorted_slots,
+            'time_slots': table_data,
+            'predefined_time_slots': all_slots,
         })
 # fetch a room's timetable
 def get_room_lab_timetable(request):
@@ -81,15 +90,6 @@ def get_room_lab_timetable(request):
         timetable = Teaches.objects.filter(room_id=room_id)  
         # Days for header row
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        all_slots = [
-            ("08:00", "09:00"),
-            ("09:00", "10:00"),
-            ("10:00", "11:00"),
-            ("11:00", "12:00"),
-            ("12:00", "13:00"),
-            ("14:00", "15:00"),
-            ("15:00", "16:00"),
-        ]
 
         table_data = defaultdict(lambda: {day: "" for day in days})
 
@@ -98,11 +98,10 @@ def get_room_lab_timetable(request):
             info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.sem}{entry.class_id}"
             table_data[slot][entry.day] = info
 
-        sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
-
         return render(request, 'room_lab.html', {
             'days': days,
-            'time_slots': sorted_slots,
+            'time_slots': table_data,
+            'predefined_time_slots': all_slots,
         })
 
 
