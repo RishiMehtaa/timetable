@@ -34,6 +34,7 @@ urlpatterns = [
     path('teacher_profile/<int:pk>/', teacher_profile, name='teacher_profile'),
     path('room_lab/', get_room_lab_timetable, name='room_lab'),
     path('room-status/', room_status, name='room_status'),
+    path('subject_details/<int:pk>/', subject_details, name='subject_details'),
     ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 #     path('timetable/', get_class_timetable, name='timetable'),
 # ]

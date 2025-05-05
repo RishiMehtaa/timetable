@@ -49,6 +49,7 @@
     <p>Welcome, {{ user.username }} | <a href="{% url 'logout' %}">Logout</a></p>
 
 {% else %}
+    <p><strong>College timetable: read-only file, edit toh dil karta hai!</strong> </p>
     <a href="{% url 'login' %}">Login</a> |
     <a href="{% url 'register' %}">Register</a>
 {% endif %}

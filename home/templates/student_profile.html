@@ -1,15 +1,25 @@
 {% extends "home.html" %}
 {% block content %}
-<div class="container mt-5">
-    <h1>Student Profile</h1>
-    <p><strong>Name:</strong> {{ student.name }}</p>
-    <p><strong>SAP ID:</strong> {{ student.sap_id }}</p>
-    <p><strong>Roll Number:</strong> {{ student.roll_no }}</p>
-    <p><strong>Class:</strong> {{ student.class_id }}</p>
-    <p><strong>Section:</strong> {{ student.section }}</p>
-    <p><strong>Semester:</strong> {{ student.sem }}</p>
-    <p><strong>Branch:</strong> {{ student.branch_id }}</p>
-</div>
+{% if not student %}
+    <div class="alert alert-danger" role="alert">
+        Please login/register to view profile.
+    </div>
+    <a href="{% url 'login' %}">Login</a> |
+    <a href="{% url 'register' %}">Register</a>
+{% else %}
+    <div class="container mt-5">
+        <h1>Student Profile</h1>
+        <p><strong>Name:</strong> {{ student.name }}</p>
+        <p><strong>SAP ID:</strong> {{ student.sap_id }}</p>
+        <p><strong>Roll Number:</strong> {{ student.roll_no }}</p>
+        <p><strong>Class:</strong> {{ student.class_id }}</p>
+        <p><strong>Section:</strong> {{ student.section }}</p>
+        <p><strong>Semester:</strong> {{ student.sem }}</p>
+        <p><strong>Branch:</strong> {{ student.branch_id }}</p>
+    </div>
+    <a href="{% url 'logout' %}">Logout</a> |
+    
+    {% endif %}
 {% endblock %}
 
    

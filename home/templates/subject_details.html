@@ -1,0 +1,12 @@
+{% extends "home.html" %}
+{% block content %} 
+<div class="container mt-5">
+    <h1>Subject Details</h1>
+    <p><strong>Subject Name:</strong> {{ subject.subject_name }}</p>
+    <p><strong>Department:</strong> {{ branch}}</p>
+    <p><strong>Credits:</strong> {{ subject.subject_credits }}</p>
+    <p><strong>Subject Abreviation:</strong> {{ subject.subject_abr }}</p>
+    <p><strong>taught by:</strong> {{ teachers }}</p>
+    <p><strong>day distribution:</strong> {{ day_distribution  }}</p>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+from collections import Counter
 from collections import defaultdict
 from datetime import datetime
 from datetime import time
@@ -39,16 +40,7 @@ def student_logout(request):
     return redirect('home')
 
 
-def student_profile(request):
-    #display student details
-    if request.user.is_authenticated:
-        student = Student.objects.get(user=request.user)
-        return render(request, 'student_profile.html', {'student': student})
     
-def teacher_profile(request,pk):
-    #display teacher details
-    teacher = Teacher.objects.get(teacher_id=pk)
-    return render(request, 'teacher_profile.html', {'teacher': teacher})
 
 def parse_time(s):
     return datetime.strptime(s, "%H:%M") 
@@ -98,7 +90,7 @@ def get_class_timetable(request):
             slot_count = time_diff_in_slots(start_dt, end_dt)
             
             # info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
-            info = f"{entry.sub_id.subject_abr}<br><a href='/teacher_profile/{entry.teacher_id.teacher_id}/'>{entry.teacher_id.name}</a><br>{entry.room_id.room_name}"
+            info = f"<br><a href='/subject_details/{entry.sub_id.subject_id}/'>{entry.sub_id.subject_abr}</a><br><a href='/teacher_profile/{entry.teacher_id.teacher_id}/'>{entry.teacher_id.name}</a><br>{entry.room_id.room_name}"
 
             # Find the index of the start time in all_slots
             for i, (slot_start, slot_end) in enumerate(all_slots):
@@ -320,6 +312,26 @@ def room_status(request):
 ## fetch which all classes a teacher teaches 
 # fetch which branches a teacher teaches in
 # fetch floor, staff room and layout of the teacher's staff room
+def teacher_profile(request, pk):
+    teacher = Teacher.objects.get(teacher_id=pk)
+
+    teaches_entries = Teaches.objects.filter(teacher_id=teacher)
+
+    subjects_with_sem = teaches_entries.values('sub_id__subject_name', 'sem').distinct()
+
+    classes = teaches_entries.values('class_id').distinct()
+
+    # branches = teaches_entries.values('branch_id__branch_name').distinct()
+
+    context = {
+        'teacher': teacher,
+        'subjects_with_sem': subjects_with_sem,
+        'classes': classes,
+        # 'branches': branches,
+    }
+
+    return render(request, 'teacher_profile.html', context)
+
 
 # CLASS PROFILE
 # fetch which all teachers teach a class with sub
@@ -329,6 +341,26 @@ def room_status(request):
 # fetch which all teachers teach a subject
 # fetch credits
 # fetch the days on which the subject is taught and how many times
+def subject_details(request, pk):
+    subject = Subject.objects.get(subject_id=pk)
+
+    branch = BranchSub.objects.filter(sub_id=subject.subject_id).values('branch_id__branch_name').distinct()
+
+    teaches_entries = Teaches.objects.filter(sub_id=subject)
+
+    teachers = teaches_entries.values( 'teacher_id__name').distinct()
+
+    day_counts = teaches_entries.values_list('day', flat=True)
+    day_distribution = dict(Counter(day_counts))  # e.g., {'Monday': 2, 'Wednesday': 1}
+
+    context = {
+        'subject': subject,
+        'branch': branch,
+        'teachers': teachers,
+        'day_distribution': day_distribution,
+    }
+
+    return render(request, 'subject_details.html', context)
 
 # BRANCH
 # fetch which all subjects are there in a branch
@@ -337,6 +369,12 @@ def room_status(request):
 
 # STUDENTS
 # fetch everything
-
+def student_profile(request):
+    #display student details
+    if request.user.is_authenticated:
+        student = Student.objects.get(user=request.user)
+        return render(request, 'student_profile.html', {'student': student})
+    else:
+        return render(request,'student_profile.html', {'error': 'pls login/register to view profile'})
 
 # fetch classes which have remedial on particular day
