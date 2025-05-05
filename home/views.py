@@ -38,6 +38,12 @@ def student_logout(request):
     logout(request)
     return redirect('home')
 
+def student_profile(request):
+    #display student details
+    if request.user.is_authenticated:
+        student = Student.objects.get(user=request.user)
+        return render(request, 'student_profile.html', {'student': student})
+
 def parse_time(s):
     return datetime.strptime(s, "%H:%M")
 
@@ -126,12 +132,18 @@ def get_class_timetable(request):
                                 "show": False
                             }
                     break  # Done with this entry
-
-        return render(request, 'timetable.html', {
-            'days': days,
-            'time_slots': table_data,
-            'predefined_time_slots': all_slots,
-        })
+        if request.GET.get('own')=='1':
+            return render(request, 'mytimetable.html', {
+                'days': days,
+                'time_slots': table_data,
+                'predefined_time_slots': all_slots,
+            })
+        else:
+            return render(request, 'timetable.html', {
+                'days': days,
+                'time_slots': table_data,
+                'predefined_time_slots': all_slots,
+            })
 
 # def get_class_timetable(request):
 #     if request.method == 'GET':

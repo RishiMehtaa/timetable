@@ -1,0 +1,15 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1>Student Profile</h1>
+    <p><strong>Name:</strong> {{ student.name }}</p>
+    <p><strong>SAP ID:</strong> {{ student.user.sap_id }}</p>
+    <p><strong>Roll Number:</strong> {{ student.roll_no }}</p>
+    <p><strong>Class:</strong> {{ student.class_id }}</p>
+    <p><strong>Section:</strong> {{ student.section }}</p>
+    <p><strong>Semester:</strong> {{ student.sem }}</p>
+    <p><strong>Branch:</strong> {{ student.user.branch_id }}</p>
+</div>
+{% endblock %}
+
+   

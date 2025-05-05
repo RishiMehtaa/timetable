@@ -8,7 +8,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-        <a class="navbar-brand" href="#">TimetableApp</a>
+        <a class="navbar-brand" href="{% url 'home' %}">TimetableApp</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
@@ -26,15 +26,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'room_lab' %}">Room/Lab</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                </li>
             </ul>
         </div>
-        <a href="{% url 'timetable' %}" class="btn btn-primary">View My Timetable</a>
+        <!-- <a href="{% url 'mytimetable' %}" class="btn btn-primary">View My Timetable</a> -->
+        {% if request.user.is_authenticated and request.user.student %}
+        <form method="get" action="{% url 'mytimetable' %}">
+            <input type="hidden" name="sem" value="{{ request.user.student.sem }}">
+            <input type="hidden" name="class_id" value="{{ request.user.student.class_id }}">
+            <input type="hidden" name="section" value="{{ request.user.student.section }}">
+            <input type="hidden" name="own" value="1">
+            <button type="submit" class="btn btn-primary">View Your Timetable</button>
+        </form>
+        {% endif %}
     </nav>
 
     <div class="container mt-5">
         {% block content %}
         {% if user.is_authenticated %}
     <p>Welcome, {{ user.username }} | <a href="{% url 'logout' %}">Logout</a></p>
+
 {% else %}
     <a href="{% url 'login' %}">Login</a> |
     <a href="{% url 'register' %}">Register</a>

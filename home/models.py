@@ -42,7 +42,8 @@ class Room(models.Model):
     
 class Student(models.Model):
     user        = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)  # One-to-One relationship with User model
-    sap_id      = models.AutoField(primary_key=True)  # Long integer, Primary Key
+    # sap_id      = models.AutoField(primary_key=True)  # Long integer, Primary Key
+    sap_id      = models.PositiveBigIntegerField(max_length=11, primary_key=True)  # Varchar, Primary Key
     roll_no     = models.CharField(max_length=4)
     name        = models.CharField(max_length=255)  # Varchar
     branch_id   = models.ForeignKey(Branch ,on_delete=models.CASCADE)  
