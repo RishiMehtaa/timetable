@@ -3,6 +3,46 @@ from datetime import datetime
 from datetime import time
 from django.shortcuts import render
 from .models import *
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from .forms import UserRegisterForm, StudentProfileForm
+
+def student_register(request):
+    if request.method == 'POST':
+        user_form = UserRegisterForm(request.POST)
+        profile_form = StudentProfileForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            return redirect('login')
+    else:
+        user_form = UserRegisterForm()
+        profile_form = StudentProfileForm()
+    return render(request, 'register.html', {'user_form': user_form, 'profile_form': profile_form})
+
+def student_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('home')
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+    return render(request, 'login.html')
+
+def student_logout(request):
+    logout(request)
+    return redirect('home')
+
+def parse_time(s):
+    return datetime.strptime(s, "%H:%M")
+
+def time_diff_in_slots(start, end):
+    return int((end - start).seconds / 60) // 30
 
 all_slots = [
     ("08:00", "08:30"), ("08:30", "09:00"),
@@ -16,13 +56,12 @@ all_slots = [
     ("16:00", "16:30"), ("16:30", "17:00"),
     ("17:00", "17:30"), ("17:30", "18:00"),
 ]
+# Create your views here.
+def get_home(request):
+    return render(request, 'home.html')
 
-def parse_time(s):
-    return datetime.strptime(s, "%H:%M")
-
-def time_diff_in_slots(start, end):
-    return int((end - start).seconds / 60) // 30
-
+# TIMETABLE
+# fetch a class's titmetable
 def get_class_timetable(request):
     if request.method == 'GET':
         sem = request.GET.get('sem')
@@ -74,13 +113,6 @@ def get_class_timetable(request):
             'predefined_time_slots': all_slots,
         })
 
-
-# Create your views here.
-def get_home(request):
-    return render(request, 'home.html')
-
-# TIMETABLE
-# fetch a class's titmetable
 # def get_class_timetable(request):
 #     if request.method == 'GET':
 #         sem = request.GET.get('sem')

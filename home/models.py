@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Branch(models.Model):
@@ -40,10 +41,11 @@ class Room(models.Model):
         return f'{self.room_type}:{self.room_name} on {self.room_floor}'
     
 class Student(models.Model):
+    user        = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)  # One-to-One relationship with User model
     sap_id      = models.AutoField(primary_key=True)  # Long integer, Primary Key
     roll_no     = models.CharField(max_length=4)
     name        = models.CharField(max_length=255)  # Varchar
-    branch_id   = models.ForeignKey(Branch ,on_delete=models.CASCADE)  # Foreign Key placeholder (can be linked to another model later)
+    branch_id   = models.ForeignKey(Branch ,on_delete=models.CASCADE)  
     class_id    = models.CharField(max_length=2)
     section     = models.IntegerField()
     sem         = models.IntegerField()

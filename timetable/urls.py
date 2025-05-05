@@ -20,6 +20,9 @@ from django.urls import path
 from home.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('register/', student_register, name='register'),
+    path('login/', student_login, name='login'),
+    path('logout/', student_logout, name='logout'),
     path('', get_home, name='home'),
     path('timetable/',get_class_timetable,name='timetable'),
     # path('timetable/<int:sem>/<str:class_id>/<str:section>/', get_class_timetable, name='class_timetable'),
