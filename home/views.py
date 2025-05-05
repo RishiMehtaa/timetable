@@ -72,7 +72,7 @@ def get_class_timetable(request):
         if section == 'dono chahiye':
             timetable = Teaches.objects.filter(sem=sem, class_id=class_id)
         else:
-            timetable = Teaches.objects.filter(sem=sem, class_id=class_id, section=section)
+            timetable = Teaches.objects.filter(sem=sem, class_id=class_id, section=section ) |  Teaches.objects.filter(sem=sem, class_id=class_id, section=0)
         
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -90,12 +90,32 @@ def get_class_timetable(request):
             # Find the index of the start time in all_slots
             for i, (slot_start, slot_end) in enumerate(all_slots):
                 if slot_start == start:
+                    # If "dono chahiye", append info for both sections
+                    if section == 'dono chahiye':
+                        existing_info = table_data[(slot_start, slot_end)][entry.day]["info"]
+                        if existing_info:
+                            # Append the new info directly to the existing info
+                            table_data[(slot_start, slot_end)][entry.day]["info"] += f"<br>{info}"
+                            
+                            
+                        else:
+                            # Initialize the cell with the current info
+                            table_data[(slot_start, slot_end)][entry.day]["info"] = info
+                        table_data[(slot_start, slot_end)][entry.day]["span"] = slot_count
+                        table_data[(slot_start, slot_end)][entry.day]["show"] = True
+                    else:
                     # Mark the first cell with info and rowspan
-                    table_data[(slot_start, slot_end)][entry.day] = {
-                        "info": info,
-                        "span": slot_count,
-                        "show": True
-                    }
+                        table_data[(slot_start, slot_end)][entry.day] = {
+                            "info": info,
+                            "span": slot_count,
+                            "show": True
+                        }
+                    # table_data[(slot_start, slot_end)][entry.day] = {
+                    #         # "info": info,
+                    #         "span": slot_count,
+                    #         "show": True
+                    #     }
+
                     # Hide the rest of the cells in that span
                     for j in range(1, slot_count):
                         if i + j < len(all_slots):
