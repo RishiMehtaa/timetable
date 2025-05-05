@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
 from django.urls import path
 from home.views import *
@@ -29,7 +31,8 @@ urlpatterns = [
     path('mytimetable/', get_class_timetable, name='mytimetable'),
     # path('timetable/<int:sem>/<str:class_id>/<str:section>/', get_class_timetable, name='class_timetable'),
     path('teacher/', get_teacher_timetable, name='teacher'),
+    path('teacher_profile/<int:pk>/', teacher_profile, name='teacher_profile'),
     path('room_lab/', get_room_lab_timetable, name='room_lab'),
-    ]
+    ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 #     path('timetable/', get_class_timetable, name='timetable'),
 # ]

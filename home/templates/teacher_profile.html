@@ -1,0 +1,13 @@
+{% extends "home.html" %}
+{% block content %} 
+{% load static %}
+<div class="container mt-5">
+    <h1>Teacher Profile</h1>
+    <p><strong>Name:</strong> {{ teacher.name }}</p>
+    <p><strong>staff room floor:</strong> {{ teacher.t_staff_floor}}</p>
+    <p><strong>staff room number:</strong> {{ teacher.t_staff_room}}</p>
+    <p><strong>Staff room layout:</strong> </p><img src="{{ teacher.t_staff_layout.url }}" alt="{{ teacher.name }}" width="200">
+    
+    <p><strong>Department:</strong> {{ teacher.department }}</p>
+</div>
+{% endblock %}

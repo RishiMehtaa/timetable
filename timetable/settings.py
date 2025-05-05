@@ -114,6 +114,9 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+MEDIA_URL = '/staffroom_layouts/'
+MEDIA_ROOT = BASE_DIR / 'home'
+
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'

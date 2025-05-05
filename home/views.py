@@ -43,6 +43,11 @@ def student_profile(request):
     if request.user.is_authenticated:
         student = Student.objects.get(user=request.user)
         return render(request, 'student_profile.html', {'student': student})
+    
+def teacher_profile(request,pk):
+    #display teacher details
+    teacher = Teacher.objects.get(teacher_id=pk)
+    return render(request, 'teacher_profile.html', {'teacher': teacher})
 
 def parse_time(s):
     return datetime.strptime(s, "%H:%M")
@@ -91,7 +96,8 @@ def get_class_timetable(request):
             end_dt = parse_time(end)
             slot_count = time_diff_in_slots(start_dt, end_dt)
             
-            info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
+            # info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
+            info = f"{entry.sub_id.subject_abr}<br><a href='/teacher_profile/{entry.teacher_id.teacher_id}/'>{entry.teacher_id.name}</a><br>{entry.room_id.room_name}"
 
             # Find the index of the start time in all_slots
             for i, (slot_start, slot_end) in enumerate(all_slots):
