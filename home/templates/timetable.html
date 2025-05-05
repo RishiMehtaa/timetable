@@ -71,6 +71,8 @@
                         <td {% if cell.span > 1 %} rowspan="{{ cell.span }}" {% endif %}>
                             {{ cell.info|safe }}
                         </td>
+                        {% else %}
+                        <td></td>
                     {% endif %}
                 {% endwith %}
             {% endfor %}
