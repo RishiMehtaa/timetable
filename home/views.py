@@ -38,6 +38,7 @@ def student_logout(request):
     logout(request)
     return redirect('home')
 
+
 def student_profile(request):
     #display student details
     if request.user.is_authenticated:
@@ -50,7 +51,7 @@ def teacher_profile(request,pk):
     return render(request, 'teacher_profile.html', {'teacher': teacher})
 
 def parse_time(s):
-    return datetime.strptime(s, "%H:%M")
+    return datetime.strptime(s, "%H:%M") 
 
 def time_diff_in_slots(start, end):
     return int((end - start).seconds / 60) // 30
@@ -281,6 +282,36 @@ def get_room_lab_timetable(request):
             'days': days,
             'time_slots': table_data,
             'predefined_time_slots': all_slots,
+        })
+    
+def room_status(request):
+    # Get the current time and day
+        now = datetime.now()
+        current_time = now.time()
+        # current_time = time(9, 45)  # Synthetic time set to 12:00 PM
+        current_day = now.strftime('%A')  # e.g., 'Monday'
+
+
+
+        # Fetch all rooms
+        all_rooms = Room.objects.all()
+
+        # Fetch rooms that are currently occupied
+        occupied_rooms = Teaches.objects.filter(
+            day=current_day,
+            start_time__lte=current_time,
+            end_time__gte=current_time
+        ).values_list('room_id', flat=True)
+
+        # Determine vacant rooms
+        vacant_rooms = all_rooms.exclude(room_id__in=occupied_rooms)
+
+        # Pass data to the template
+        return render(request, 'room_status.html', {
+            'occupied_rooms': Room.objects.filter(room_id__in=occupied_rooms),
+            'vacant_rooms': vacant_rooms,
+            'current_time': now.strftime('%I:%M %p'),  # Format time as HH:MM AM/PM
+            'current_day': current_day,
         })
 
 

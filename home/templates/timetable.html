@@ -32,7 +32,8 @@
     </div>
 </form>
 {% if time_slots %}
-<table class="table table-bordered text-center align-middle">
+<div id="timetable-container" style="position: relative;">
+<table id="timetable" class="table table-bordered text-center align-middle">
     <thead class="table-dark">
         <tr>
             <th>Time</th>
@@ -78,6 +79,87 @@
     
     
 </table>
+<div id="current-time-line" style="position: absolute; height: 2px; background-color: rgba(89, 255, 83, 0.566); width: 100%;"></div>
+</div>
+<style>
+    #timetable-container {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    #timetable {
+        table-layout: auto;
+        width: 102.5%;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const timetableContainer = document.getElementById("timetable-container");
+    const timetable = document.getElementById("timetable");
+    const timeLine = document.getElementById("current-time-line");
+
+    function updateLinePosition() {
+        // Synthetic data for testing (12:30)
+        const currentHour = 10;
+        const currentMinute = 45;
+
+        // const now = new Date();
+        // const currentHour = now.getHours();
+        // const currentMinute = now.getMinutes();
+
+        // Calculate the total minutes since midnight
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+        // Get all time slots from the table
+        const rows = timetable.querySelectorAll("tbody tr");
+        let timetableStart = null;
+        let timetableEnd = null;
+
+        // Loop through the rows to find the start and end times
+        rows.forEach((row, index) => {
+            const timeCell = row.querySelector("td:first-child");
+            if (timeCell) {
+                const [startTime, endTime] = timeCell.textContent.trim().split(" - ");
+                const [startHour, startMinute] = startTime.split(":").map(Number);
+                const [endHour, endMinute] = endTime.split(":").map(Number);
+
+                const startInMinutes = startHour * 60 + startMinute;
+                const endInMinutes = endHour * 60 + endMinute;
+
+                if (index === 0) {
+                    timetableStart = startInMinutes;
+                }
+                timetableEnd = endInMinutes;
+
+                // Check if the current time falls within this slot
+                if (currentTimeInMinutes >= startInMinutes && currentTimeInMinutes < endInMinutes) {
+                    const rowHeight = row.offsetHeight;
+                    const rowTop = row.offsetTop;
+                    const percentage = (currentTimeInMinutes - startInMinutes) / (endInMinutes - startInMinutes);
+                    const linePosition = rowTop + rowHeight * percentage;
+
+                    // Update the line's position
+                    timeLine.style.top = linePosition + "px";
+                }
+            }
+        });
+
+        // Hide the line if the current time is outside the timetable range
+        if (currentTimeInMinutes < timetableStart || currentTimeInMinutes > timetableEnd) {
+            timeLine.style.display = "none";
+        } else {
+            timeLine.style.display = "block";
+        }
+    }
+
+    // Update the line position every minute
+    updateLinePosition();
+    setInterval(updateLinePosition, 60000);
+});
+
+</script>
+
 
 {% else %}
     <p>No timetable available yet.</p>
