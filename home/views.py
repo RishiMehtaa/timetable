@@ -1,30 +1,78 @@
 from collections import defaultdict
+from datetime import datetime
 from datetime import time
 from django.shortcuts import render
 from .models import *
 
 all_slots = [
-            ("08:00", "08:30"),
-            ("08:30", "09:00"),
-            ("09:00", "09:30"),
-            ("09:30", "10:00"),
-            ("10:00", "10:30"),
-            ("10:30", "11:00"),
-            ("11:00", "11:30"),
-            ("11:30", "12:00"),
-            ("12:00", "12:30"),
-            ("12:30", "13:00"),
-            ("13:00", "13:30"),
-            ("13:30", "14:00"),
-            ("14:00", "14:30"),
-            ("14:30", "15:00"),
-            ("15:00", "15:30"),
-            ("15:30", "16:00"),
-            ("16:00", "16:30"),
-            ("16:30", "17:00"),
-            ("17:00", "17:30"),
-            ("17:30", "18:00"),
-            ]
+    ("08:00", "08:30"), ("08:30", "09:00"),
+    ("09:00", "09:30"), ("09:30", "10:00"),
+    ("10:00", "10:30"), ("10:30", "11:00"),
+    ("11:00", "11:30"), ("11:30", "12:00"),
+    ("12:00", "12:30"), ("12:30", "13:00"),
+    ("13:00", "13:30"), ("13:30", "14:00"),
+    ("14:00", "14:30"), ("14:30", "15:00"),
+    ("15:00", "15:30"), ("15:30", "16:00"),
+    ("16:00", "16:30"), ("16:30", "17:00"),
+    ("17:00", "17:30"), ("17:30", "18:00"),
+]
+
+def parse_time(s):
+    return datetime.strptime(s, "%H:%M")
+
+def time_diff_in_slots(start, end):
+    return int((end - start).seconds / 60) // 30
+
+def get_class_timetable(request):
+    if request.method == 'GET':
+        sem = request.GET.get('sem')
+        class_id = request.GET.get('class_id')
+        section = request.GET.get('section')
+        
+        # Fetching data
+        if section == 'dono chahiye':
+            timetable = Teaches.objects.filter(sem=sem, class_id=class_id)
+        else:
+            timetable = Teaches.objects.filter(sem=sem, class_id=class_id, section=section)
+        
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+        table_data = defaultdict(lambda: {day: {"info": "", "span": 1, "show": True} for day in days})
+
+        for entry in timetable:
+            start = entry.start_time.strftime("%H:%M")
+            end = entry.end_time.strftime("%H:%M")
+            start_dt = parse_time(start)
+            end_dt = parse_time(end)
+            slot_count = time_diff_in_slots(start_dt, end_dt)
+            
+            info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
+
+            # Find the index of the start time in all_slots
+            for i, (slot_start, slot_end) in enumerate(all_slots):
+                if slot_start == start:
+                    # Mark the first cell with info and rowspan
+                    table_data[(slot_start, slot_end)][entry.day] = {
+                        "info": info,
+                        "span": slot_count,
+                        "show": True
+                    }
+                    # Hide the rest of the cells in that span
+                    for j in range(1, slot_count):
+                        if i + j < len(all_slots):
+                            hidden_slot = all_slots[i + j]
+                            table_data[hidden_slot][entry.day] = {
+                                "info": "",
+                                "span": 1,
+                                "show": False
+                            }
+                    break  # Done with this entry
+
+        return render(request, 'timetable.html', {
+            'days': days,
+            'time_slots': table_data,
+            'predefined_time_slots': all_slots,
+        })
 
 
 # Create your views here.
@@ -33,34 +81,34 @@ def get_home(request):
 
 # TIMETABLE
 # fetch a class's titmetable
-def get_class_timetable(request):
-    if request.method == 'GET':
-        sem = request.GET.get('sem')
-        class_id = request.GET.get('class_id')
-        section = request.GET.get('section')
-        if section == 'dono chahiye':
-            timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
-        else:
-            timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
-        # Days for header row
-        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+# def get_class_timetable(request):
+#     if request.method == 'GET':
+#         sem = request.GET.get('sem')
+#         class_id = request.GET.get('class_id')
+#         section = request.GET.get('section')
+#         if section == 'dono chahiye':
+#             timetable = Teaches.objects.filter(sem=sem,class_id=class_id)    
+#         else:
+#             timetable = Teaches.objects.filter(sem=sem,class_id=class_id,section=section)  
+#         # Days for header row
+#         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-        table_data = defaultdict(lambda: {day: "" for day in days})
+#         table_data = defaultdict(lambda: {day: "" for day in days})
 
-        for entry in timetable:
-            slot = (entry.start_time.strftime("%H:%M"), entry.end_time.strftime("%H:%M"))
-            info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
-            table_data[slot][entry.day] = info
+#         for entry in timetable:
+#             slot = (entry.start_time.strftime("%H:%M"), entry.end_time.strftime("%H:%M"))
+#             info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.room_id.room_name}"
+#             table_data[slot][entry.day] = info
 
-        sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
-        # print(sorted_slots)
-        # print(table_data)
+#         sorted_slots = sorted(table_data.items(), key=lambda x: x[0])
+#         # print(sorted_slots)
+#         # print(table_data)
 
-        return render(request, 'timetable.html', {
-            'days': days,
-            'time_slots': table_data,
-            'predefined_time_slots': all_slots,
-        })
+#         return render(request, 'timetable.html', {
+#             'days': days,
+#             'time_slots': table_data,
+#             'predefined_time_slots': all_slots,
+#         })
 
 # fetch a teacher's timetable
 def get_teacher_timetable(request):
@@ -70,19 +118,56 @@ def get_teacher_timetable(request):
         # Days for header row
         days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-        table_data = defaultdict(lambda: {day: "" for day in days})
+        # table_data = defaultdict(lambda: {day: "" for day in days})
+        table_data = defaultdict(lambda: {day: {"info": "", "span": 1, "show": True} for day in days})
 
+
+        # for entry in timetable:
+        #     slot = (entry.start_time.strftime("%H:%M"), entry.end_time.strftime("%H:%M"))
+        #     info = f"{entry.sub_id.subject_abr}<br>{entry.sem}{entry.class_id}<br>{entry.room_id.room_name}"
+        #     table_data[slot][entry.day] = info
+
+
+        # return render(request, 'teacher.html', {
+        #     'days': days,
+        #     'time_slots': table_data,
+        #     'predefined_time_slots': all_slots,
+        # })
         for entry in timetable:
-            slot = (entry.start_time.strftime("%H:%M"), entry.end_time.strftime("%H:%M"))
+            start = entry.start_time.strftime("%H:%M")
+            end = entry.end_time.strftime("%H:%M")
+            start_dt = parse_time(start)
+            end_dt = parse_time(end)
+            slot_count = time_diff_in_slots(start_dt, end_dt)
+            
             info = f"{entry.sub_id.subject_abr}<br>{entry.sem}{entry.class_id}<br>{entry.room_id.room_name}"
-            table_data[slot][entry.day] = info
 
+            # Find the index of the start time in all_slots
+            for i, (slot_start, slot_end) in enumerate(all_slots):
+                if slot_start == start:
+                    # Mark the first cell with info and rowspan
+                    table_data[(slot_start, slot_end)][entry.day] = {
+                        "info": info,
+                        "span": slot_count,
+                        "show": True
+                    }
+                    # Hide the rest of the cells in that span
+                    for j in range(1, slot_count):
+                        if i + j < len(all_slots):
+                            hidden_slot = all_slots[i + j]
+                            table_data[hidden_slot][entry.day] = {
+                                "info": "",
+                                "span": 1,
+                                "show": False
+                            }
+                    break  # Done with this entry
 
         return render(request, 'teacher.html', {
             'days': days,
             'time_slots': table_data,
             'predefined_time_slots': all_slots,
         })
+
 # fetch a room's timetable
 def get_room_lab_timetable(request):
     if request.method == 'GET':
@@ -94,9 +179,33 @@ def get_room_lab_timetable(request):
         table_data = defaultdict(lambda: {day: "" for day in days})
 
         for entry in timetable:
-            slot = (entry.start_time.strftime("%H:%M"), entry.end_time.strftime("%H:%M"))
+            start = entry.start_time.strftime("%H:%M")
+            end = entry.end_time.strftime("%H:%M")
+            start_dt = parse_time(start)
+            end_dt = parse_time(end)
+            slot_count = time_diff_in_slots(start_dt, end_dt)
+            
             info = f"{entry.sub_id.subject_abr}<br>{entry.teacher_id.name}<br>{entry.sem}{entry.class_id}"
-            table_data[slot][entry.day] = info
+
+            # Find the index of the start time in all_slots
+            for i, (slot_start, slot_end) in enumerate(all_slots):
+                if slot_start == start:
+                    # Mark the first cell with info and rowspan
+                    table_data[(slot_start, slot_end)][entry.day] = {
+                        "info": info,
+                        "span": slot_count,
+                        "show": True
+                    }
+                    # Hide the rest of the cells in that span
+                    for j in range(1, slot_count):
+                        if i + j < len(all_slots):
+                            hidden_slot = all_slots[i + j]
+                            table_data[hidden_slot][entry.day] = {
+                                "info": "",
+                                "span": 1,
+                                "show": False
+                            }
+                    break  # Done with this entry
 
         return render(request, 'room_lab.html', {
             'days': days,

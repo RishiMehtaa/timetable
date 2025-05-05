@@ -31,7 +31,7 @@
             {% endfor %}
         </tr>
     </thead>
-    <tbody>
+    <!-- <tbody>
         {% for slot in predefined_time_slots %}
         <tr>
             <td>{{ slot.0 }} - {{ slot.1 }}</td>
@@ -46,7 +46,24 @@
             {% endfor %}
         </tr>
         {% endfor %}
+    </tbody> -->
+    <tbody>
+        {% for slot in predefined_time_slots %}
+        <tr>
+            <td>{{ slot.0 }} - {{ slot.1 }}</td>
+            {% for day in days %}
+                {% with cell=time_slots|get_item:slot|get_item:day %}
+                    {% if cell.show %}
+                        <td {% if cell.span > 1 %} rowspan="{{ cell.span }}" {% endif %}>
+                            {{ cell.info|safe }}
+                        </td>
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
     </tbody>
+
 </table>
 
 {% else %}
