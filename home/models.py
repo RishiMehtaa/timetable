@@ -59,8 +59,8 @@ class Teaches(models.Model):
     teacher_id = models.ForeignKey(Teacher, on_delete=models.CASCADE)  # Foreign Key to Teacher
     sub_id = models.ForeignKey(Subject,on_delete=models.CASCADE)  # Subject ID (e.g., SC01)
     sem = models.IntegerField()  # Semester
-    room_id = models.ForeignKey(Room, on_delete=models.CASCADE)  # Foreign Key to Room
-    class_id = models.CharField(max_length=2)  # Class ID (e.g., C2)
+    room_id = models.ForeignKey(Room, on_delete=models.CASCADE,)  # Foreign Key to Room
+    class_id = models.CharField(max_length=2, )  # Class ID (e.g., C2)
     section = models.IntegerField(default=0)  # Section
     start_time = models.TimeField()  # Start Time
     end_time = models.TimeField()  # End Time

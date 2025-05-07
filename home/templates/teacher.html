@@ -9,10 +9,15 @@
         <select name="teacher_id" id="teacher_id" class="form-select">
             <option value="1">Aniket Kore</option>
             <option value="2">Pranit Bari</option>
-            <option value="3">Sudhir Bagul</option>
-            <option value="4">Pankaj Sonawane</option>
-            <option value="5">Sudhir Iyer</option>
-            <option value="6">Nilesh Ghawate</option>
+            <option value="3">Pankaj Sonawane</option>
+            <option value="4">Nilesh Ghawathe</option>
+            <option value="5">Tushar Sawant</option>
+            <option value="6">Pradeep T</option>
+            <option value="7">Khushali Deulkar</option>
+            <option value="8">Dashrath Kale</option>
+            <option value="9">Visiting Faculty</option>
+            <option value="10">Vivan Lobo</option>
+
             <!-- Add more as needed -->
         </select>
     </div>
@@ -91,12 +96,12 @@
     
         function updateLinePosition() {
             // Synthetic data for testing (12:30)
-            const currentHour = 10;
-            const currentMinute = 45;
+            // const currentHour = 10;
+            // const currentMinute = 45;
     
-            // const now = new Date();
-            // const currentHour = now.getHours();
-            // const currentMinute = now.getMinutes();
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
     
             // Calculate the total minutes since midnight
             const currentTimeInMinutes = currentHour * 60 + currentMinute;

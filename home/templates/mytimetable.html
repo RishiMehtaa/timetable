@@ -59,7 +59,7 @@
 
     #timetable {
         table-layout: auto;
-        width: 102.5%;
+        width: 106.5%;
     }
 
     .current-day-column {
@@ -75,12 +75,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateLinePosition() {
         // Synthetic data for testing (12:30)
-        const currentHour = 10;
-        const currentMinute = 45;
+       // const currentHour = 10;
+        //const currentMinute = 45;
 
-        // const now = new Date();
-        // const currentHour = now.getHours();
-        // const currentMinute = now.getMinutes();
+        const now = new Date();
+         const currentHour = now.getHours();
+         const currentMinute = now.getMinutes();
 
         // Calculate the total minutes since midnight
         const currentTimeInMinutes = currentHour * 60 + currentMinute;
